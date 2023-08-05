@@ -10,7 +10,7 @@ stages:
 build:
   stage: build
   script:
-    - ls -R src/main/docker
+    - mvn clean package -Dquarkus.package.type=native
     - REPO_NAME=$(basename $CI_PROJECT_URL)
     - IMAGE_TAG=$(echo $CI_COMMIT_SHA | cut -c1-8)
     - IMAGE_NAME=gcr.io/$GCP_PROJECT_ID/$REPO_NAME:$IMAGE_TAG
