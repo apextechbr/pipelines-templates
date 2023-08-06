@@ -47,5 +47,5 @@ runs:
       run: |
         IMAGE_TAG=${{ github.sha }}
         IMAGE_NAME=gcr.io/${{ inputs.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
-        gcloud run deploy nome-da-app --image=$IMAGE_NAME --platform=managed --region=us-central1 --allow-unauthenticated
+        gcloud run deploy ${{ steps.get_repo_name.outputs.REPO_NAME }}-service --image=$IMAGE_NAME --platform=managed --region=us-central1 --allow-unauthenticated
       shell: bash
