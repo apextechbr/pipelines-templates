@@ -25,7 +25,9 @@ runs:
     #   shell: bash
 
     - name: Configurar o Google Cloud SDK
-      run: gcloud auth activate-service-account --key-file=<(echo "${secrets.CLOUD_RUN_CREDENTIALS}")
+      run: |
+        echo "secrets.CLOUD_RUN_CREDENTIALS" > /tmp/gcloud_key.json
+        gcloud auth activate-service-account --key-file=/tmp/gcloud_key.json
       shell: bash
 
     - name: Nome do Repositório
