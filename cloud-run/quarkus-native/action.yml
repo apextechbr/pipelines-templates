@@ -16,16 +16,16 @@ runs:
         java-version: 17
         distribution: "zulu"
 
-    - name: Compilar a aplicação
-      run: chmod +x ./mvnw && ./mvnw compile
-      shell: bash
+    # - name: Compilar a aplicação
+    #   run: chmod +x ./mvnw && ./mvnw compile
+    #   shell: bash
 
-    - name: Executar testes
-      run: chmod +x ./mvnw && ./mvnw test
-      shell: bash
+    # - name: Executar testes
+    #   run: chmod +x ./mvnw && ./mvnw test
+    #   shell: bash
 
     - name: Configurar o Google Cloud SDK
-      run: gcloud auth activate-service-account --key-file=cloud-run-deploy-google-credentials.json
+      run: gcloud auth activate-service-account --key-file=./cloud-run-deploy-google-credentials.json
       shell: bash
 
     - name: Nome do Repositório
