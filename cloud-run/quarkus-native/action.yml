@@ -1,4 +1,10 @@
-name: Quarkus Native Template
+name: "Quarkus Native Cloud Run"
+description: "Pipeline to CI/CD with Cloud Run from application Quarkus native"
+
+inputs:
+  GCP_PROJECT_ID:
+    description: "The project id in GCP"
+    required: true
 
 runs:
   using: "composite"
@@ -28,12 +34,12 @@ runs:
     - name: Construir e fazer push da imagem Docker
       run: |
         IMAGE_TAG=${{ github.sha }}
-        IMAGE_NAME=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
+        IMAGE_NAME=gcr.io/${{ inputs.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
         docker build -t $IMAGE_NAME .
         docker push $IMAGE_NAME
 
     - name: Fazer deploy no Cloud Run
       run: |
         IMAGE_TAG=${{ github.sha }}
-        IMAGE_NAME=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
+        IMAGE_NAME=gcr.io/${{ inputs.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
         gcloud run deploy nome-da-app --image=$IMAGE_NAME --platform=managed --region=us-central1 --allow-unauthenticated
