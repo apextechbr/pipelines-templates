@@ -1,0 +1,36 @@
+name: "Quarkus native build image"
+description: "Build e push da imagem docker para o Artifactory Register da aplicação quarkus"
+
+inputs:
+  GCP_PROJECT_ID:
+    description: "The project id in GCP"
+    required: true
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Configurar JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: 17
+        distribution: "zulu"
+
+    - name: Configurar o Google Cloud SDK
+      run: |
+        echo "$GOOGLE_CLOUD_KEY" > /tmp/gcloud_key.json
+        gcloud auth activate-service-account --key-file=/tmp/gcloud_key.json
+      shell: bash
+
+    - name: Get Nome do Repositório
+      id: get_repo_name
+      run: echo "::set-output name=REPO_NAME::$(basename $GITHUB_REPOSITORY)"
+      shell: bash
+
+    - name: Construir e fazer push da imagem Docker
+      run: |
+        IMAGE_TAG=${{ github.sha }}
+        IMAGE_NAME=us-east1-docker.pkg.dev/${{ inputs.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
+        docker build -t $IMAGE_NAME -f src/main/docker/Dockerfile.native-micro .
+        docker push $IMAGE_NAME
+      shell: bash
