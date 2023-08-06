@@ -3,6 +3,7 @@ name: Deploy Automatizado Quarkus
 on:
   push:
     branches:
+      - "main"
       - "master"
       - "release/*"
 
