@@ -16,13 +16,13 @@ runs:
         java-version: 17
         distribution: "zulu"
 
-    # - name: Compilar a aplicação
-    #   run: chmod +x ./mvnw && ./mvnw compile
-    #   shell: bash
+    - name: Executar testes
+      run: chmod +x ./mvnw && ./mvnw test
+      shell: bash
 
-    # - name: Executar testes
-    #   run: chmod +x ./mvnw && ./mvnw test
-    #   shell: bash
+    - name: Compilação nativa
+      run: chmod +x ./mvnw && ./mvnw package -Pnative
+      shell: bash
 
     - name: Configurar o Google Cloud SDK
       run: |
@@ -30,7 +30,7 @@ runs:
         gcloud auth activate-service-account --key-file=/tmp/gcloud_key.json
       shell: bash
 
-    - name: Nome do Repositório
+    - name: Get Nome do Repositório
       id: get_repo_name
       run: echo "::set-output name=REPO_NAME::$(basename $GITHUB_REPOSITORY)"
       shell: bash
@@ -39,7 +39,7 @@ runs:
       run: |
         IMAGE_TAG=${{ github.sha }}
         IMAGE_NAME=gcr.io/${{ inputs.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
-        docker build -t $IMAGE_NAME .
+        docker build -t $IMAGE_NAME -f src/main/docker/Dockerfile.native-micro .
         docker push $IMAGE_NAME
       shell: bash
 
