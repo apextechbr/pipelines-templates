@@ -1,0 +1,47 @@
+name: Deploy Automatizado Quarkus
+
+on:
+  push:
+    branches:
+      - "master"
+      - "release/*"
+
+jobs:
+  build_and_deploy:
+    name: Compilar, Construir Imagem e Fazer Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v2
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+
+      - name: Compilar a aplicação
+        run: ./mvnw compile
+
+      - name: Executar testes
+        run: ./mvnw test
+
+      - name: Configurar o Google Cloud SDK
+        run: gcloud auth activate-service-account --key-file=cloud-run-deploy-google-credentials.json
+
+      - name: Nome do Repositório
+        id: get_repo_name
+        run: echo "::set-output name=REPO_NAME::$(basename $GITHUB_REPOSITORY)"
+
+      - name: Construir e fazer push da imagem Docker
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          IMAGE_NAME=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+
+      - name: Fazer deploy no Cloud Run
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          IMAGE_NAME=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
+          gcloud run deploy nome-da-app --image=$IMAGE_NAME --platform=managed --region=us-central1 --allow-unauthenticated
