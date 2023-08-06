@@ -20,16 +20,20 @@ runs:
 
     - name: Compilar a aplicação
       run: ./mvnw compile
+      shell: bash
 
     - name: Executar testes
       run: ./mvnw test
+      shell: bash
 
     - name: Configurar o Google Cloud SDK
       run: gcloud auth activate-service-account --key-file=cloud-run-deploy-google-credentials.json
+      shell: bash
 
     - name: Nome do Repositório
       id: get_repo_name
       run: echo "::set-output name=REPO_NAME::$(basename $GITHUB_REPOSITORY)"
+      shell: bash
 
     - name: Construir e fazer push da imagem Docker
       run: |
@@ -37,9 +41,11 @@ runs:
         IMAGE_NAME=gcr.io/${{ inputs.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
         docker build -t $IMAGE_NAME .
         docker push $IMAGE_NAME
+      shell: bash
 
     - name: Fazer deploy no Cloud Run
       run: |
         IMAGE_TAG=${{ github.sha }}
         IMAGE_NAME=gcr.io/${{ inputs.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
         gcloud run deploy nome-da-app --image=$IMAGE_NAME --platform=managed --region=us-central1 --allow-unauthenticated
+      shell: bash
