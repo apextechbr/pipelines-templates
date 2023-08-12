@@ -16,6 +16,11 @@ runs:
         java-version: 17
         distribution: "zulu"
 
+    - name: Baixar artefatos
+      uses: actions/download-artifact@v2
+      with:
+        name: target-folder
+
     - name: Configurar o Google Cloud SDK
       run: |
         echo "$GOOGLE_CLOUD_KEY" > /tmp/gcloud_key.json
