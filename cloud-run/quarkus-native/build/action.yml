@@ -20,6 +20,10 @@ runs:
       uses: actions/download-artifact@v2
       with:
         name: target-folder
+        
+    - name: Executar próxima etapa
+      run: ls target
+      shell: bash
 
     - name: Configurar o Google Cloud SDK
       run: |
