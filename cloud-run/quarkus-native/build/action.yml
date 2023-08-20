@@ -22,7 +22,11 @@ runs:
         name: target-folder
 
     - name: Debugar pasta
-      run: ls -la /home/runner/work/prodigit-api/prodigit-api
+      run: |
+        $pwd
+        ls
+        cd target-folder
+        ls
       shell: bash
 
     # - name: Configurar o Google Cloud SDK
