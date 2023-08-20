@@ -27,6 +27,7 @@ runs:
         echo "$GOOGLE_CLOUD_KEY" > /tmp/gcloud_key.json
         cat /tmp/gcloud_key.json
         gcloud auth activate-service-account --key-file=/tmp/gcloud_key.json
+        gcloud auth configure-docker us-east1-docker.pkg.dev
       shell: bash
 
     - name: Get Nome do Repositório
