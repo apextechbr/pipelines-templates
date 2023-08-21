@@ -25,6 +25,7 @@ runs:
     - name: Deploy da imagem no Cloud Run
       run: |
         echo "Valor: $(cat build/image-name.txt)"
+        chmod +x build/image-name.txt
         IMAGE_NAME=cat build/image-name.txt
         echo ${IMAGE_NAME}
       shell: bash
