@@ -39,6 +39,6 @@ runs:
       run: |
         IMAGE_TAG=${{ github.sha }}
         IMAGE_NAME=${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
-        docker build -t ${IMAGE_NAME} -f src/main/docker/Dockerfile.native-micro .
-        docker push us-east1-docker.pkg.dev/${{ inputs.GCP_PROJECT_ID }}/${IMAGE_NAME}
+        docker build -t us-east1-docker.pkg.dev/${{ inputs.GCP_PROJECT_ID }}/${IMAGE_NAME} -f src/main/docker/Dockerfile.native-micro .
+        docker push ${IMAGE_NAME}
       shell: bash
