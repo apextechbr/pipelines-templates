@@ -39,6 +39,7 @@ runs:
       run: |
         IMAGE_TAG=${{ github.sha }}
         IMAGE_NAME=us-east1-docker.pkg.dev/${{ inputs.GCP_PROJECT_ID }}/prodigit-api/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
+        mkdir build
         echo ${IMAGE_NAME} >> build/image-name.txt
         docker build -t ${IMAGE_NAME} -f src/main/docker/Dockerfile.native-micro .
         docker push ${IMAGE_NAME}
