@@ -20,7 +20,7 @@ runs:
       uses: actions/download-artifact@v2
       with:
         name: image-name
-        path: image-name.txt
+        path: ./image-name.txt
 
     - name: Deploy da imagem no Cloud Run
       run: |
