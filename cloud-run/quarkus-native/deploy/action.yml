@@ -19,15 +19,12 @@ runs:
     - name: Recuperar nome da imagem
       uses: actions/download-artifact@v2
       with:
-        name: image-name
-        path: ./image-name.txt
+        name: build-folder
+        path: build
 
     - name: Deploy da imagem no Cloud Run
       run: |
-        ls
-        cd image-name.txt
-        ls
-        echo "Valor: $(cat image-name.txt)"
-        IMAGE_NAME=cat image-name.txt
+        echo "Valor: $(cat build/image-name.txt)"
+        IMAGE_NAME=cat build/image-name.txt
         echo ${IMAGE_NAME}
       shell: bash
