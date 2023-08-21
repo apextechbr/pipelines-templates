@@ -39,6 +39,13 @@ runs:
       run: |
         IMAGE_TAG=${{ github.sha }}
         IMAGE_NAME=us-east1-docker.pkg.dev/${{ inputs.GCP_PROJECT_ID }}/prodigit-api/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
+        echo ${IMAGE_NAME} >> image-name.txt
         docker build -t ${IMAGE_NAME} -f src/main/docker/Dockerfile.native-micro .
         docker push ${IMAGE_NAME}
       shell: bash
+
+    - name: Salvar nome da imagem
+      uses: actions/upload-artifact@v2
+      with:
+        name: image-name
+        path: image-name.txt

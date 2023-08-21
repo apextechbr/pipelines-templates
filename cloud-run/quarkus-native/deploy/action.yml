@@ -1,0 +1,30 @@
+name: "Quarkus native deploy image"
+description: "Deploy image pushed in Artifactory Register in Cloud Run"
+
+inputs:
+  GCP_PROJECT_ID:
+    description: "The project id in GCP"
+    required: true
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Configurar JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: 17
+        distribution: "zulu"
+
+    - name: Recuperar nome da imagem
+      uses: actions/download-artifact@v2
+      with:
+        name: image-name
+        path: image-name.txt
+
+    - name: Deploy da imagem no Cloud Run
+      run: |
+        echo "Valor: $(cat variavel.txt)"
+        IMAGE_NAME=cat variavel.txt
+        echo ${IMAGE_NAME}
+      shell: bash
