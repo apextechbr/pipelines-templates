@@ -24,6 +24,9 @@ runs:
 
     - name: Deploy da imagem no Cloud Run
       run: |
+        ls
+        cd image-name.txt
+        ls
         echo "Valor: $(cat image-name.txt)"
         IMAGE_NAME=cat image-name.txt
         echo ${IMAGE_NAME}
