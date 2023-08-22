@@ -36,6 +36,6 @@ runs:
     - name: Deploy da imagem no Cloud Run
       run: |
         IMAGE_NAME=$(cat build/image-name.txt)
-        echo "$CLOUD_RUN_SERVICE_ID"
-        echo "gcloud run deploy $CLOUD_RUN_SERVICE_ID --platform managed --region=us-central1 --image $IMAGE_NAME --set-env-vars DISABLE_SIGNAL_HANDLERS=foobar"
+        echo "$inputs.CLOUD_RUN_SERVICE_ID"
+        echo "gcloud run deploy $inputs.CLOUD_RUN_SERVICE_ID --platform managed --region=us-central1 --image $IMAGE_NAME --set-env-vars DISABLE_SIGNAL_HANDLERS=foobar"
       shell: bash
