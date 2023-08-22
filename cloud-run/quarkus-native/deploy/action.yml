@@ -5,6 +5,9 @@ inputs:
   GCP_PROJECT_ID:
     description: "The project id in GCP"
     required: true
+  CLOUD_RUN_SERVICE_ID:
+    description: "The service id of Cloud Run in GCP"
+    required: true
 
 runs:
   using: "composite"
@@ -22,9 +25,16 @@ runs:
         name: build-folder
         path: build
 
+    - name: Configurar o Google Cloud SDK
+      run: |
+        echo "$GOOGLE_CLOUD_KEY" > /tmp/gcloud_key.json
+        cat /tmp/gcloud_key.json
+        gcloud auth activate-service-account --key-file=/tmp/gcloud_key.json
+        gcloud auth configure-docker us-east1-docker.pkg.dev
+      shell: bash
+
     - name: Deploy da imagem no Cloud Run
       run: |
-        echo "Valor: $(cat build/image-name.txt)"
         IMAGE_NAME=$(cat build/image-name.txt)
-        echo ${IMAGE_NAME}
+        gcloud brun services update ${CLOUD_RUN_SERVICE_ID} --platform managed --region=us-central1 --image ${IMAGE_NAME} --set-env-vars DISABLE_SIGNAL_HANDLERS=foobar
       shell: bash
