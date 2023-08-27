@@ -1,0 +1,66 @@
+name: CI/CD Quarkus Native
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v2
+
+      - name: Executar testes
+        uses: apextechbr/pipelines-templates/java/tests@main
+
+  compile_native:
+    name: Compilação Nativa
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v2
+
+      - name: Compilação nativa
+        uses: apextechbr/pipelines-templates/cloud-run/quarkus-native/compile/@main
+
+  build_image:
+    name: Build e Push da Imagem
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_CLOUD_KEY: ${{ vars.CLOUD_RUN_CREDENTIALS }}
+
+    needs: compile_native
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v2
+
+      - name: Build e push da imagem
+        uses: apextechbr/pipelines-templates/cloud-run/quarkus-native/build@main
+        with:
+          GCP_PROJECT_ID: prodigit-395000
+
+  deploy:
+    name: Deploy no GCP Cloud Run
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_CLOUD_KEY: ${{ vars.CLOUD_RUN_CREDENTIALS }}
+
+    needs: build_image
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v2
+
+      - name: Deploy
+        uses: apextechbr/pipelines-templates/cloud-run/quarkus-native/deploy@main
+        with:
+          GCP_PROJECT_ID: prodigit-395000
+          GCP_REGION_ID: us-east1
+          CLOUD_RUN_SERVICE_ID: prodigit-api
+          DATABASE_CONNECTION_STRING: ${{ secrets.DATABASE_CONNECTION_STRING }}
