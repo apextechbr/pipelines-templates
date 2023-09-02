@@ -12,9 +12,9 @@ runs:
         distribution: "zulu"
 
     - name: Compilação nativa
-      run: chmod +x ./mvnw && ./mvnw package -Pnative
+      run: chmod +x ./mvnw && ./mvnw package -Pnative -DskipTests -Dquarkus.native.container-build=true
       shell: bash
-      
+
     - name: Salvar artefatos
       uses: actions/upload-artifact@v2
       with:

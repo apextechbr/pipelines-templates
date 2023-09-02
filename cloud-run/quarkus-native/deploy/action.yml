@@ -1,0 +1,48 @@
+name: "Quarkus native deploy image"
+description: "Deploy image pushed in Artifactory Register in Cloud Run"
+
+inputs:
+  GCP_PROJECT_ID:
+    description: "The project id in GCP"
+    required: true
+  GCP_REGION_ID:
+    description: "The region id of Cloud Run in GCP for deploy"
+    required: true
+  CLOUD_RUN_SERVICE_ID:
+    description: "The service id of Cloud Run in GCP"
+    required: true
+  DATABASE_NAME:
+    description: "The database name of connection"
+    required: false
+  DATABASE_CONNECTION_STRING:
+    description: "The credencial to the database connection"
+    required: false
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Configurar JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: 17
+        distribution: "zulu"
+
+    - name: Recuperar nome da imagem
+      uses: actions/download-artifact@v2
+      with:
+        name: build-folder
+        path: build
+
+    - name: Configurar o Google Cloud SDK
+      run: |
+        echo "$GOOGLE_CLOUD_KEY" > /tmp/gcloud_key.json
+        gcloud auth activate-service-account --key-file=/tmp/gcloud_key.json
+        gcloud auth configure-docker us-east1-docker.pkg.dev
+      shell: bash
+
+    - name: Deploy da imagem no Cloud Run
+      run: |
+        IMAGE_NAME=$(cat build/image-name.txt)
+        gcloud run deploy ${{ inputs.CLOUD_RUN_SERVICE_ID }} --project ${{ inputs.GCP_PROJECT_ID }} --platform managed --region=${{ inputs.GCP_REGION_ID }} --image $IMAGE_NAME --set-env-vars DISABLE_SIGNAL_HANDLERS=foobar DATABASE_CONNECTION_STRING=${{ inputs.DATABASE_CONNECTION_STRING }} DATABASE_NAME=${{ inputs.DATABASE_NAME}}
+      shell: bash

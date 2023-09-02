@@ -20,16 +20,13 @@ runs:
       uses: actions/download-artifact@v2
       with:
         name: target-folder
-        
-    - name: Executar próxima etapa
-      run: ls target
-      shell: bash
+        path: target
 
     - name: Configurar o Google Cloud SDK
       run: |
         echo "$GOOGLE_CLOUD_KEY" > /tmp/gcloud_key.json
-        cat /tmp/gcloud_key.json
         gcloud auth activate-service-account --key-file=/tmp/gcloud_key.json
+        gcloud auth configure-docker us-east1-docker.pkg.dev
       shell: bash
 
     - name: Get Nome do Repositório
@@ -40,7 +37,17 @@ runs:
     - name: Construir e fazer push da imagem Docker
       run: |
         IMAGE_TAG=${{ github.sha }}
-        IMAGE_NAME=us-east1-docker.pkg.dev/${{ inputs.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
-        docker build -t $IMAGE_NAME -f src/main/docker/Dockerfile.native-micro .
-        docker push $IMAGE_NAME
+        IMAGE_NAME=us-east1-docker.pkg.dev/${{ inputs.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
+
+        mkdir build
+        echo ${IMAGE_NAME} >> build/image-name.txt
+
+        docker build -t ${IMAGE_NAME} -f src/main/docker/Dockerfile.native-micro .
+        docker push ${IMAGE_NAME}
       shell: bash
+
+    - name: Salvar nome da imagem
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-folder
+        path: build
