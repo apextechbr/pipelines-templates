@@ -50,7 +50,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Compilação nativa
-        uses: apextechbr/pipelines-templates/cloud-run/quarkus-native/compile/@main\
+        uses: apextechbr/pipelines-templates/cloud-run/quarkus-native/compile/@main
 
   build_image:
     name: Build e Push da Imagem
