@@ -3,9 +3,31 @@ name: CI/CD Quarkus Native
 on:
   push:
     branches:
-      - "*"
+      - "main"
 
 jobs:
+  package:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v2
+
+      - name: Maven Package
+        uses: apextechbr/pipelines-templates/java/package@main
+
+  code-style:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v2
+
+      - name: Code Style
+        uses: apextechbr/pipelines-templates/java/code-style@main
+
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -26,13 +48,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Compilação nativa
-        uses: apextechbr/pipelines-templates/cloud-run/quarkus-native/compile/@main
+        uses: apextechbr/pipelines-templates/cloud-run/quarkus-native/compile/@main\
 
   build_image:
     name: Build e Push da Imagem
     runs-on: ubuntu-latest
     env:
-      GOOGLE_CLOUD_KEY: ${{ vars.CLOUD_RUN_CREDENTIALS }}
+      GOOGLE_CLOUD_KEY: ${{ secrets.CLOUD_RUN_CREDENTIALS }}
 
     needs: compile_native
 
@@ -43,13 +65,13 @@ jobs:
       - name: Build e push da imagem
         uses: apextechbr/pipelines-templates/cloud-run/quarkus-native/build@main
         with:
-          GCP_PROJECT_ID: prodigit-395000
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
 
   deploy:
     name: Deploy no GCP Cloud Run
     runs-on: ubuntu-latest
     env:
-      GOOGLE_CLOUD_KEY: ${{ vars.CLOUD_RUN_CREDENTIALS }}
+      GOOGLE_CLOUD_KEY: ${{ secrets.CLOUD_RUN_CREDENTIALS }}
 
     needs: build_image
 
@@ -60,7 +82,8 @@ jobs:
       - name: Deploy
         uses: apextechbr/pipelines-templates/cloud-run/quarkus-native/deploy@main
         with:
-          GCP_PROJECT_ID: prodigit-395000
-          GCP_REGION_ID: us-east1
-          CLOUD_RUN_SERVICE_ID: prodigit-api
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GCP_REGION_ID: ${{ vars.GCP_REGION_ID }}
+          CLOUD_RUN_SERVICE_ID: ${{ vars.CLOUD_RUN_SERVICE_ID }}
+          DATABASE_NAME: ${{ vars.DATABASE_NAME }}
           DATABASE_CONNECTION_STRING: ${{ secrets.DATABASE_CONNECTION_STRING }}

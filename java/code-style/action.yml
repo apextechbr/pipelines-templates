@@ -1,0 +1,16 @@
+name: "Java 17 testsa and sonarqube"
+description: "Executando verificações de code style"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Configurar JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: 17
+        distribution: "zulu"
+
+    - name: Code Style
+      run: chmod +x ./mvnw && ./mvnw -T 1C -am checkstyle:check -Dcheckstyle.config.location=google_checks.xml -Dcheckstyle.violationSeverity=warning
+      shell: bash

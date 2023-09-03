@@ -1,0 +1,16 @@
+name: "Java 17 testsa and sonarqube"
+description: "Executando compilação do código"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Configurar JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: 17
+        distribution: "zulu"
+
+    - name: Maven Package
+      run: chmod +x ./mvnw && ./mvnw package -DskipTests
+      shell: bash
