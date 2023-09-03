@@ -43,6 +43,8 @@ jobs:
     name: Compilação Nativa
     runs-on: ubuntu-latest
 
+    needs: [package, code-style, test]
+
     steps:
       - name: Checkout do código
         uses: actions/checkout@v2
