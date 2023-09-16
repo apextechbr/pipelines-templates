@@ -42,5 +42,5 @@ runs:
         IMAGE_NAME=$(cat build/image-name.txt)
         echo $IMAGE_NAME
         gcloud run deploy ${{ inputs.CLOUD_RUN_SERVICE_ID }} --project ${{ inputs.GCP_PROJECT_ID }} --platform managed --region=${{ inputs.GCP_REGION_ID }} --image $IMAGE_NAME \
-        --set-env-vars "DISABLE_SIGNAL_HANDLERS=foobar, DATABASE_CONNECTION_STRING=${{ inputs.DATABASE_CONNECTION_STRING }}, DATABASE_NAME=${{ inputs.DATABASE_NAME}}"
+        --set-env-vars "DISABLE_SIGNAL_HANDLERS=foobar
       shell: bash
