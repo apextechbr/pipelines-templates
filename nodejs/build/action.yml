@@ -41,9 +41,8 @@ runs:
 
     - name: Build and push docker image
       run: |
-        echo ${{ github.event.repository.name }}
         IMAGE_TAG=${{ github.sha }}
-        IMAGE_NAME=us-east1-docker.pkg.dev/${{ inputs.GCP_PROJECT_ID }}/${{ steps.get_repo_name.outputs.REPO_NAME }}/${{ steps.get_repo_name.outputs.REPO_NAME }}:${IMAGE_TAG}
+        IMAGE_NAME=us-east1-docker.pkg.dev/${{ inputs.GCP_PROJECT_ID }}/${{ github.event.repository.name }}/${{ github.event.repository.name }}:${IMAGE_TAG}
 
         mkdir build
         echo ${IMAGE_NAME} >> build/image-name.txt
