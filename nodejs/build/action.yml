@@ -13,11 +13,9 @@ runs:
     - uses: actions/checkout@v3
 
     - name: Build APP
-      uses: actions/setup-node@v3
+      uses: borales/actions-yarn@v4
       with:
-        node-version: "18.x"
-        registry-url: "https://registry.npmjs.org"
-      run: npm run build
+        cmd: build
 
     - name: Configure Google Cloud SDK
       run: |
