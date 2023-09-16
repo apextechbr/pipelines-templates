@@ -50,3 +50,9 @@ runs:
         docker build -t ${IMAGE_NAME} .
         docker push ${IMAGE_NAME}
       shell: bash
+
+    - name: Save image name
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-folder
+        path: build
